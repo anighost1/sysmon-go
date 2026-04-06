@@ -12,5 +12,10 @@ func Publish(channel string, data any) error {
 		return err
 	}
 
+	err = redisClient.Client.Set(redisClient.Ctx, channel, jsonData, 0).Err()
+	if err != nil {
+		return err
+	}
+
 	return redisClient.Client.Publish(redisClient.Ctx, channel, jsonData).Err()
 }
