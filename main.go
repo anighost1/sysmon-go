@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"sysmon/cpu"
+	"sysmon/disk"
+	"sysmon/memory"
 	"sysmon/publisher"
 	"sysmon/redisClient"
 )
@@ -33,14 +35,32 @@ func main() {
 	for {
 		select {
 		case <-ticker.C:
-			data, err := cpu.GetCpuData()
-			if err != nil {
+
+			// CPU
+			if data, err := cpu.GetCpuData(); err == nil {
+				if err := publisher.Publish("metrics:cpu", data); err != nil {
+					logger.Error("CPU publish failed")
+				}
+			} else {
 				logger.Warn("CPU fetch failed")
-				continue
 			}
 
-			if err := publisher.Publish("cpu_channel", data); err != nil {
-				logger.Error("Redis publish failed")
+			// MEMORY
+			if data, err := memory.GetMemoryData(); err == nil {
+				if err := publisher.Publish("metrics:memory", data); err != nil {
+					logger.Error("Memory publish failed")
+				}
+			} else {
+				logger.Warn("Memory fetch failed")
+			}
+
+			// DISK
+			if data, err := disk.GetDiskData(); err == nil {
+				if err := publisher.Publish("metrics:disk", data); err != nil {
+					logger.Error("Disk publish failed")
+				}
+			} else {
+				logger.Warn("Disk fetch failed")
 			}
 
 		case <-ctx.Done():
