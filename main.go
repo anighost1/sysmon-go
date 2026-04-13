@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"log"
 	"log/slog"
+	"net/http"
 	"os"
 	"time"
 
@@ -11,6 +13,8 @@ import (
 	"sysmon/memory"
 	"sysmon/publisher"
 	"sysmon/redisClient"
+	"sysmon/sse"
+	"sysmon/subscriber"
 )
 
 func main() {
@@ -22,6 +26,17 @@ func main() {
 		logger.Error("Redis connection failed")
 		return
 	}
+
+	// Start Redis subscriber → SSE
+	subscriber.StartSubscriber()
+
+	// SSE route
+	http.HandleFunc("/events", sse.Handler)
+
+	go func() {
+		log.Println("SSE server running on :8080")
+		http.ListenAndServe(":8080", nil)
+	}()
 
 	// graceful shutdown
 	ctx, stop := context.WithCancel(context.Background())
