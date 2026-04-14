@@ -5,6 +5,7 @@ import (
 )
 
 type MemoryStats struct {
+	Name        string  `json:"name"`
 	Total       uint64  `json:"total"`
 	Used        uint64  `json:"used"`
 	Free        uint64  `json:"free"`
@@ -18,6 +19,7 @@ func GetMemoryData() (*MemoryStats, error) {
 	}
 
 	return &MemoryStats{
+		Name:        "memory",
 		Total:       vm.Total,
 		Used:        vm.Used,
 		Free:        vm.Free,

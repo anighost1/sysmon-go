@@ -10,6 +10,7 @@ type CoreUsage struct {
 }
 
 type CpuStats struct {
+	Name          string      `json:"name"`
 	PhysicalCores int         `json:"physical_cores"`
 	LogicalCores  int         `json:"logical_cores"`
 	TotalUsage    float64     `json:"total_usage"`
@@ -46,6 +47,7 @@ func GetCpuData() (*CpuStats, error) {
 	}
 
 	return &CpuStats{
+		Name:          "cpu",
 		PhysicalCores: physical,
 		LogicalCores:  logical,
 		TotalUsage:    totalArr[0],

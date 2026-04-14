@@ -5,6 +5,7 @@ import (
 )
 
 type DiskStats struct {
+	Name        string  `json:"name"`
 	Path        string  `json:"path"`
 	Total       uint64  `json:"total"`
 	Used        uint64  `json:"used"`
@@ -19,6 +20,7 @@ func GetDiskData() (*DiskStats, error) {
 	}
 
 	return &DiskStats{
+		Name:        "disk",
 		Path:        usage.Path,
 		Total:       usage.Total,
 		Used:        usage.Used,
